@@ -1,0 +1,73 @@
+name: zyun
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zyun-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/data/app.db}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_ALG: HS256
+      ACCESS_TOKEN_TTL_MIN: ${ACCESS_TOKEN_TTL_MIN:-60}
+      REFRESH_TOKEN_TTL_DAY: ${REFRESH_TOKEN_TTL_DAY:-7}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      ENVIRONMENT: ${ENVIRONMENT:-dev}
+    volumes:
+      - backend-data:/app/data
+    restart: unless-stopped
+
+  # PC 管理端（B/G 端）
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: ${VITE_API_BASE:-/api}
+    container_name: zyun-pc
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 移动端 APP（B 端农户工具 + C 端溯源）
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: ${VITE_API_BASE:-/api}
+    container_name: zyun-app
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: zyun-postgres
+    profiles: ["with-pg"]   # 默认不启动，需要时：docker compose --profile with-pg up
+    environment:
+      POSTGRES_USER: zyun
+      POSTGRES_PASSWORD: zyun_pass
+      POSTGRES_DB: zyun
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: zyun-redis
+    profiles: ["with-pg"]
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  backend-data:

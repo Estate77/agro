@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# 数据库与缓存
+*.db
+*.sqlite
+*.sqlite3
+pgdata/
+
+# Node
+node_modules/
+dist/
+.vite/
+.npm
+.yarn
+*.log
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+
+# 环境
+.env
+.env.local
+.env.*.local
+
+# 打包
+*.tar
+*.tar.gz
+*.zip
+
+# 日志
+*.log

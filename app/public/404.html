@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>智耘农</title>
+    <script>
+      /* GitHub Pages SPA hack：深链接 404 时带路径跳回首页 */
+      (function () {
+        var path = window.location.pathname.replace(/\/404\.html$/, "");
+        window.location.replace(
+          path.slice(0, path.lastIndexOf("/") + 1) +
+            "index.html" +
+            window.location.search +
+            "#/" +
+            window.location.pathname
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -1,0 +1,99 @@
+name: Deploy frontends to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # PC 管理端
+      - name: Build PC (frontend)
+        working-directory: frontend
+        run: |
+          npm ci || npm install
+          npm run build
+
+      # 移动端 APP
+      - name: Build APP (app)
+        working-directory: app
+        run: |
+          npm ci || npm install
+          npm run build
+
+      # 组装站点：落地页 + /pc + /app，注入运行时 API 地址
+      - name: Assemble site & inject runtime config
+        env:
+          # 公网后端地址（HF Space）。换后端平台时改这一行即可
+          BACKEND_API_BASE: https://estate77-zyun-api.hf.space/api
+        run: |
+          mkdir -p site/pc site/app
+          cp -r frontend/dist/. site/pc/
+          cp -r app/dist/. site/app/
+
+          printf 'window.__ZYUN_API_BASE__ = "%s";\n' "$BACKEND_API_BASE" > site/pc/config.js
+          printf 'window.__ZYUN_API_BASE__ = "%s";\n' "$BACKEND_API_BASE" > site/app/config.js
+
+          cat > site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="zh-CN">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>智耘云 · 智慧农业 Demo</title>
+            <style>
+              body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+                   justify-content:center;gap:28px;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+                   background:linear-gradient(135deg,#2f7d4f,#4caf80);color:#fff}
+              h1{font-size:32px;margin:0}
+              p{color:#e8f5ec;margin:0;font-size:15px}
+              .cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+              a{display:block;width:240px;padding:26px 0;text-align:center;border-radius:16px;
+                background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+                color:#fff;text-decoration:none;font-size:19px;font-weight:600}
+              a:hover{background:rgba(255,255,255,.24)}
+              small{opacity:.85}
+            </style>
+          </head>
+          <body>
+            <h1>🌾 智耘云 · 智慧农业 Demo</h1>
+            <p>物联网 + AI + 大数据 · PC 管理端 & 移动端 APP</p>
+            <div class="cards">
+              <a href="./pc/">💻 PC 管理端</a>
+              <a href="./app/">📱 移动端 APP</a>
+            </div>
+            <p><small>演示账号：admin / manager / worker / guest（密码见仓库 README）</small></p>
+          </body>
+          </html>
+          EOF
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
