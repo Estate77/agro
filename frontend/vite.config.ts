@@ -25,7 +25,8 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         "/api": {
-          target: "http://localhost:8000",
+          // 本地后端地址可用 VITE_API_PROXY 覆盖（.env.local，不提交）
+          target: env.VITE_API_PROXY || "http://localhost:8000",
           changeOrigin: true,
         },
       },

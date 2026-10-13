@@ -1,8 +1,13 @@
 :root {
+  /* 「数字农政」农业主题：松林绿 × 麦秆琥珀 × 米纸 */
   --zy-primary: #2f7d4f;
   --zy-primary-soft: #e8f5ec;
   --zy-bg: #f5f7fa;
   --zy-text: #1f2d3d;
+  --zy-canvas: #f4f1e7;
+  --zy-ink: #2c3a2e;
+  --zy-accent: #d9a441;
+  --zy-display: Georgia, "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
 }
 
 * {
@@ -17,7 +22,7 @@ body,
   padding: 0;
   font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
   color: var(--zy-text);
-  background: var(--zy-bg);
+  background: var(--zy-canvas);
 }
 
 a {
@@ -37,7 +42,21 @@ a {
 }
 
 .page-title {
-  font-size: 20px;
+  font-family: var(--zy-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--zy-ink);
+}
+
+/* 卡片质感：米纸画布上的白瓷卡片 */
+.el-card {
+  border-radius: 10px;
+  border-color: #e6e1cf;
+  box-shadow: 0 1px 3px rgba(44, 58, 46, 0.06);
+}
+.el-card__header {
+  border-bottom-color: #eee9d8;
   font-weight: 600;
 }
 

@@ -1,4 +1,5 @@
 import axios, { AxiosError, type AxiosInstance } from "axios";
+import { installOfflineAdapter } from "@/mock/adapter";
 
 /**
  * API 地址优先级：
@@ -57,5 +58,8 @@ export async function unwrap<T>(p: Promise<{ data: Resp<T> }>): Promise<T> {
   }
   return r.data.data;
 }
+
+// 离线演示适配层：站点 config.js 注入 window.__ZYUN_DEMO_OFFLINE__ = true 时生效
+installOfflineAdapter(http);
 
 export default http;

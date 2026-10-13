@@ -78,6 +78,18 @@ DEFAULT_ROLES: list[tuple[str, str, str, list[str]]] = [
         "只读数据资产与基础信息",
         ["asset:read", "block:read", "planting:read", "farmwork:read", "batch:read"],
     ),
+    (
+        "gov_regulator",
+        "G端监管员",
+        "政务监管：主体档案 / 批次溯源 / 数据共享目录",
+        ["block:read", "planting:read", "farmwork:read", "batch:read", "asset:read"],
+    ),
+    (
+        "c_operator",
+        "C端运营",
+        "C 端商城运营：订单履约 / 溯源客服 / 碳积分",
+        ["batch:read", "asset:read", "farmwork:read"],
+    ),
 ]
 
 ASSET_TEMPLATES: list[dict] = [
@@ -262,7 +274,7 @@ def seed() -> None:
                 db.add(r)
         db.flush()
 
-        # ---------- 4. 账号（4 个，覆盖 4 类角色） ----------
+        # ---------- 4. 账号（6 个，覆盖 B/G/C 三端角色） ----------
         role_map = {r.code: r for r in db.scalars(select(Role)).all()}
         demo_users: list[tuple[str, str, str, str, bool]] = [
             # (username, password, display_name, role_code, is_platform_admin)
@@ -270,6 +282,8 @@ def seed() -> None:
             ("manager", "manager123", "园区管理员", "tenant_admin", False),
             ("worker", "worker123", "李技术员", "farm_operator", False),
             ("guest", "guest123", "访客（只读）", "viewer", False),
+            ("gov", "gov123", "市场监管·王专员", "gov_regulator", False),
+            ("cmall", "cmall123", "商城运营·小芸", "c_operator", False),
         ]
         for username, password, display_name, role_code, is_admin in demo_users:
             if db.scalar(select(User).where(User.username == username)) is None:
@@ -284,7 +298,7 @@ def seed() -> None:
                 u.roles = [role_map[role_code]]
                 db.add(u)
         db.flush()
-        log.info("账号就绪: admin / manager / worker / guest")
+        log.info("账号就绪: admin / manager / worker / guest / gov / cmall")
 
         # ---------- 5. 地块 ----------
         block_map: dict[str, Block] = {}
@@ -479,6 +493,7 @@ def seed() -> None:
         log.info("初始化完成 ✅（演示样例已就绪）")
         log.info("账号: admin/admin123 · manager/manager123")
         log.info("      worker/worker123（农事打卡） · guest/guest123（只读）")
+        log.info("      gov/gov123（G端监管） · cmall/cmall123（C端运营）")
         log.info("溯源码演示: TB-DEMO-20260315-A1 / TB-DEMO-20260420-B2 / CG-DEMO-20260418-C3")
         log.info("Swagger: http://localhost:8000/docs")
         log.info("=" * 56)

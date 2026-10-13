@@ -19,6 +19,7 @@ from app.api.v1 import (
     plantings,
     rbac,
     tenants,
+    trace,
 )
 
 api_router = APIRouter()
@@ -31,6 +32,7 @@ api_router.include_router(plantings.router, prefix="/plantings", tags=["种植�
 api_router.include_router(farmwork.router, prefix="/farmwork", tags=["农事任务"])
 api_router.include_router(harvests.router, prefix="/harvests", tags=["采收"])
 api_router.include_router(batches.router, prefix="/batches", tags=["溯源批次"])
+api_router.include_router(trace.router, prefix="/trace", tags=["溯源中心（PC 演示）"])
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["工作台"])
 api_router.include_router(ai.router, prefix="/ai", tags=["AI 识病/问答（演示）"])
 api_router.include_router(demo.router, prefix="/demo", tags=["演示数据（天气/遥测/告警）"])
