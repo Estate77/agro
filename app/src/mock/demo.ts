@@ -498,6 +498,7 @@ function fail(code: number, message: string) {
 // ---------- 路由 ----------
 
 function route(method: string, path: string, params: Record<string, unknown>, body: Record<string, unknown>, headers: Record<string, unknown>): { code: number; message: string; data: unknown } {
+  method = method.toUpperCase(); // 适配器传入的 method 为小写，统一成大写再比较
   const seg = path.replace(/^\/api/, "").replace(/^\/v1\//, "").split("/").filter(Boolean);
   const q = (k: string): string | undefined => (params[k] === undefined ? undefined : String(params[k]));
 
