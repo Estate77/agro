@@ -38,18 +38,15 @@ jobs:
           npm ci || npm install
           npm run build
 
-      # 组装站点：落地页 + /pc + /app，注入运行时 API 地址
+      # 组装站点：落地页 + /pc + /app，注入运行时配置
       - name: Assemble site & inject runtime config
-        env:
-          # 公网后端地址（HF Space）。换后端平台时改这一行即可
-          BACKEND_API_BASE: https://estate77-zyun-api.hf.space/api
         run: |
           mkdir -p site/pc site/app
           cp -r frontend/dist/. site/pc/
           cp -r app/dist/. site/app/
 
-          printf 'window.__ZYUN_API_BASE__ = "%s";\n' "$BACKEND_API_BASE" > site/pc/config.js
-          # APP 端启用纯前端演示模式：请求由内置 mock 层响应，不依赖公网后端
+          # PC / APP 均启用纯前端离线演示模式：请求由内置演示数据层回放，不依赖公网后端
+          printf 'window.__ZYUN_API_BASE__ = "";\nwindow.__ZYUN_DEMO_OFFLINE__ = true;\n' > site/pc/config.js
           printf 'window.__ZYUN_API_BASE__ = "";\nwindow.__ZYUN_DEMO_OFFLINE__ = true;\n' > site/app/config.js
 
           cat > site/index.html <<'EOF'
@@ -75,12 +72,12 @@ jobs:
           </head>
           <body>
             <h1>🌾 智耘云 · 智慧农业 Demo</h1>
-            <p>物联网 + AI + 大数据 · PC 管理端 & 移动端 APP</p>
+            <p>物联网 + AI + 大数据 · PC 管理端 & 移动端 APP · 纯前端离线演示</p>
             <div class="cards">
               <a href="./pc/">💻 PC 管理端</a>
               <a href="./app/">📱 移动端 APP</a>
             </div>
-            <p><small>演示账号：admin / manager / worker / guest（密码见仓库 README）</small></p>
+            <p><small>演示账号：admin / manager / worker / guest / gov / cmall（密码见仓库 README）</small></p>
           </body>
           </html>
           EOF
