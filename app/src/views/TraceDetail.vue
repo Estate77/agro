@@ -2,10 +2,12 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPublicTrace, type TracePublic } from "@/api/app";
+import { getCarbonFootprint, type CarbonFootprint } from "@/api/ext";
 
 const route = useRoute();
 const router = useRouter();
 const trace = ref<TracePublic | null>(null);
+const carbon = ref<CarbonFootprint | null>(null);
 const loading = ref(true);
 const error = ref("");
 
@@ -14,6 +16,7 @@ async function load() {
   error.value = "";
   try {
     trace.value = await getPublicTrace(route.params.code as string);
+    carbon.value = await getCarbonFootprint(route.params.code as string).catch(() => null);
   } catch (e: any) {
     error.value = e.message || "溯源码无效";
   } finally {
@@ -62,6 +65,39 @@ function fmtDate(s: string | null): string {
             <span class="tag tag-warn">{{ trace.status }}</span>
             <span v-if="trace.quality_grade" class="tag tag-gray">品质等级 {{ trace.quality_grade }}</span>
           </div>
+        </div>
+
+        <!-- 碳足迹小卡片 -->
+        <div class="card carbon" v-if="carbon">
+          <div class="row">
+            <b style="font-size: 18px" class="grow">🌿 碳足迹</b>
+            <span class="tag" :class="carbon.vs_category_avg_pct < 0 ? 'tag-green' : 'tag-warn'">
+              {{ carbon.level }}
+            </span>
+          </div>
+          <div class="row mt8">
+            <div class="grow">
+              <div style="font-size: 30px; font-weight: 800; color: var(--zy-primary)">
+                {{ carbon.kg_co2e }}
+              </div>
+              <div class="muted" style="font-size: 13px">{{ carbon.unit }}</div>
+            </div>
+            <div class="right muted" style="font-size: 14px">
+              较同类平均
+              <b :style="{ color: carbon.vs_category_avg_pct < 0 ? 'var(--zy-primary)' : 'var(--zy-warn)' }">
+                {{ carbon.vs_category_avg_pct > 0 ? "+" : "" }}{{ carbon.vs_category_avg_pct }}%
+              </b>
+            </div>
+          </div>
+          <div class="cb-breakdown">
+            <div v-for="b in carbon.breakdown" :key="b.item" class="cb-item">
+              <div class="cb-bar"><i :style="{ width: b.pct + '%' }"></i></div>
+              <div class="muted" style="font-size: 12px">{{ b.item }} {{ b.kg }}kg</div>
+            </div>
+          </div>
+          <p class="muted" style="font-size: 12px; margin-bottom: 0">
+            扫码即可累积碳积分，去「碳账户」看看 ›
+          </p>
         </div>
 
         <!-- 全链路时间线 -->
@@ -167,5 +203,27 @@ function fmtDate(s: string | null): string {
   background: #f6f8f9;
   border-radius: 12px;
   padding: 12px 14px;
+}
+.carbon {
+  border: 1.5px solid var(--zy-primary-soft);
+}
+.cb-breakdown {
+  margin: 12px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+}
+.cb-bar {
+  height: 8px;
+  background: #eef1f4;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.cb-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1e8f5a, #27b071);
+  border-radius: 4px;
 }
 </style>

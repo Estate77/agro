@@ -49,6 +49,17 @@ def _wrap(code: int, message: str, data: Any | None = None) -> dict[str, Any]:
     return {"code": code, "message": message, "data": data}
 
 
+def _jsonable(obj: Any) -> Any:
+    """递归清洗校验错误中的 bytes（Pydantic v2 的 input/ctx 可能含 bytes，无法直接 JSON 序列化）。"""
+    if isinstance(obj, bytes):
+        return obj.decode("utf-8", errors="replace")
+    if isinstance(obj, dict):
+        return {k: _jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_jsonable(v) for v in obj]
+    return obj
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(BizError)
     async def _biz_error(_: Request, exc: BizError) -> JSONResponse:
@@ -61,7 +72,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def _validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content=_wrap(42201, "参数校验失败", exc.errors()),
+            content=_wrap(42201, "参数校验失败", _jsonable(exc.errors())),
         )
 
     @app.exception_handler(Exception)

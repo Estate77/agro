@@ -32,6 +32,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* 老年模式 / 大字号模式：全局缩放 1.18 倍（「我的」页可开关） */
+html.zy-large body {
+  zoom: 1.18;
+}
+
 #app {
   height: 100%;
 }

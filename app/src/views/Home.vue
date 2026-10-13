@@ -14,27 +14,21 @@ const alerts = ref<Alert[]>([]);
 const todayTasks = ref<FarmTask[]>([]);
 const loading = ref(true);
 
-/** 工具九宫格：可用的跳转，未上线的提示 v0.5 */
+/** 工具九宫格 */
 const tools = [
   { icon: "📷", label: "拍照识病害", to: "/disease" },
-  { icon: "📡", label: "设备数据", to: "/devices" },
+  { icon: "🤖", label: "AI 问答", to: "/qa" },
+  { icon: "🧴", label: "投入品查询", to: "/market?tab=inputs" },
   { icon: "🔍", label: "扫码溯源", to: "/trace" },
-  { icon: "📝", label: "今日任务", to: "/tasks" },
-  { icon: "🧴", label: "投入品查询", soon: true },
-  { icon: "💹", label: "价格行情", soon: true },
-  { icon: "📜", label: "补贴政策", soon: true },
-  { icon: "🆘", label: "紧急求助", soon: true },
-  { icon: "🤖", label: "AI 问答", soon: true },
+  { icon: "💹", label: "价格行情", to: "/market?tab=price" },
+  { icon: "📜", label: "补贴政策", to: "/market?tab=policy" },
+  { icon: "🗺️", label: "我的地块", to: "/blocks" },
+  { icon: "💰", label: "经营账本", to: "/farm" },
+  { icon: "🆘", label: "紧急求助", to: "/sos" },
 ];
 
 function onTool(t: (typeof tools)[number]) {
-  if (t.soon) {
-    toast.value = "该功能规划于 v0.5，敬请期待";
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => (toast.value = ""), 1800);
-    return;
-  }
-  router.push(t.to!);
+  router.push(t.to);
 }
 
 const toast = ref("");
@@ -78,6 +72,7 @@ onMounted(load);
         </div>
         <div class="title" style="font-size: 20px">{{ auth.user?.tenant_name || "智耘示范园区" }}</div>
       </div>
+      <button class="nav-ico" @click="router.push('/messages')">🔔</button>
       <span class="tag tag-red" v-if="queueSize() > 0">待同步 {{ queueSize() }}</span>
     </header>
 
@@ -156,6 +151,14 @@ onMounted(load);
 </template>
 
 <style scoped>
+.nav-ico {
+  font-size: 22px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
 .weather .emoji {
   font-size: 44px;
 }

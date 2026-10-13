@@ -7,11 +7,15 @@ from app.api.v1 import (
     auth,
     batches,
     blocks,
+    carbon,
     dashboard,
     data_assets,
     demo,
     farmwork,
+    gov,
     harvests,
+    market,
+    mobile,
     plantings,
     rbac,
     tenants,
@@ -28,5 +32,9 @@ api_router.include_router(farmwork.router, prefix="/farmwork", tags=["农事任�
 api_router.include_router(harvests.router, prefix="/harvests", tags=["采收"])
 api_router.include_router(batches.router, prefix="/batches", tags=["溯源批次"])
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["工作台"])
-api_router.include_router(ai.router, prefix="/ai", tags=["AI 识病虫害（演示）"])
+api_router.include_router(ai.router, prefix="/ai", tags=["AI 识病/问答（演示）"])
 api_router.include_router(demo.router, prefix="/demo", tags=["演示数据（天气/遥测/告警）"])
+api_router.include_router(mobile.router, prefix="/mobile", tags=["移动端聚合"])
+api_router.include_router(carbon.router, prefix="/carbon", tags=["碳账户（C 端演示）"])
+api_router.include_router(gov.router, prefix="/gov", tags=["智耘政（G 端演示）"])
+api_router.include_router(market.router, prefix="/market", tags=["行情/政策/投入品（演示）"])

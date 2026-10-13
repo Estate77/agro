@@ -151,6 +151,90 @@ class DiseaseIn(BaseModel):
     block_id: int | None = Field(default=None, description="所属地块")
 
 
+# ---------- AI 农技问答（演示 mock，关键词匹配知识库） ----------
+
+QA_KB: list[dict[str, Any]] = [
+    {
+        "keywords": ["番茄", "西红柿"],
+        "answer": "番茄关键管理要点：\n1. 温度：白天 22–28℃、夜间不低于 13℃；\n2. 水分：滴灌小水勤浇，避免叶面结露；\n3. 常见病害：早疫病、晚疫病、灰霉病，注意通风降湿；\n4. 保花保果：熊蜂授粉或震荡授粉，慎用 2,4-D。",
+    },
+    {
+        "keywords": ["施肥", "追肥", "底肥", "肥料"],
+        "answer": "施肥建议：\n1. 底肥：腐熟有机肥 2–3 吨/亩 + 平衡复合肥 30–40kg/亩；\n2. 追肥：果期高钾水溶肥 5kg/亩，随水冲施，7–10 天 1 次；\n3. 叶面补肥：缺钙引起脐腐病可喷 0.3% 氯化钙。",
+    },
+    {
+        "keywords": ["浇水", "灌溉", "滴灌"],
+        "answer": "浇水原则「见干见湿」：\n1. 苗期控水蹲根，土壤湿度 55–65%；\n2. 果期需水大，晴天上午浇，避免午后高温浇水；\n3. 雨前不浇、雨后排水，棚内湿度控制在 70% 以下。",
+    },
+    {
+        "keywords": ["蚜虫", "白粉虱", "粉虱"],
+        "answer": "蚜虫/白粉虱防治：\n1. 物理防治：黄板每亩 25–30 张；\n2. 生物防治：释放丽蚜小蜂；\n3. 化学防治：10% 吡虫啉 1500 倍液，注意轮换用药防抗性，安全间隔期 7 天。",
+    },
+    {
+        "keywords": ["白粉病"],
+        "answer": "白粉病防治：\n1. 发病初期喷 15% 三唑酮 1000 倍液或 42% 苯菌悬浮剂；\n2. 加强通风降湿，避免偏施氮肥；\n3. 病叶及时摘除带出田外，安全间隔期 14 天。",
+    },
+    {
+        "keywords": ["低温", "冻害", "寒潮", "霜冻"],
+        "answer": "寒潮应对：\n1. 提前 1–2 天浇小水增加土壤热容；\n2. 棚室加盖二道幕/小拱棚，夜间温度低于 5℃ 建议临时加温；\n3. 冻后不要立即升温，缓慢回温并叶面喷糖氮液（1% 葡萄糖 + 0.3% 尿素）恢复。",
+    },
+    {
+        "keywords": ["补贴", "政策", "申报"],
+        "answer": "常见补贴有三类：\n1. 耕地地力保护补贴（6 月底前申报）；\n2. 农机购置补贴（购机后 60 日内）；\n3. 绿色/有机认证奖补（获证后 90 日内）。可在「补贴政策」里查看你所在地区的具体标准与材料清单。",
+    },
+    {
+        "keywords": ["药害", "烧叶", "黄叶"],
+        "answer": "疑似药害/肥害处理：\n1. 立即停用可疑药剂肥料，大水淋洗土壤；\n2. 叶面喷施 0.01% 芸苔素内酯 + 0.2% 磷酸二氢钾缓解；\n3. 保留标签与照片留证，必要时联系服务站上门。",
+    },
+]
+
+QA_FALLBACK = (
+    "这个问题我还在学习当中～你可以换个说法再问一次，比如「番茄白粉病怎么治」「尿素一亩用多少」。"
+    "如果比较紧急，建议在「紧急求助」里联系服务站农技员，或拍张照片用「拍照识病害」让 AI 先看看。"
+)
+
+
+class QaIn(BaseModel):
+    """农技问答请求。"""
+
+    question: str = Field(..., min_length=1, max_length=500, description="用户问题（语音已转写或文字）")
+
+
+@router.post("/qa", response_model=Resp[dict[str, Any]], summary="AI 农技问答（演示：关键词匹配）")
+def ai_qa(payload: QaIn) -> Resp[dict[str, Any]]:
+    q = payload.question
+    best: dict[str, Any] | None = None
+    best_hits = 0
+    for item in QA_KB:
+        hits = sum(1 for k in item["keywords"] if k in q)
+        if hits > best_hits:
+            best, best_hits = item, hits
+    if best is None:
+        return Resp(
+            data={
+                "answer": QA_FALLBACK,
+                "matched": False,
+                "suggestions": ["番茄白粉病怎么治？", "一亩地底肥用多少？", "寒潮来了怎么防冻？"],
+                "model": "demo-mock-v0.1",
+                "is_mock": True,
+            }
+        )
+    rng = random.Random(int(hashlib.sha256(q.encode()).hexdigest()[:8], 16))
+    suggestions = rng.sample(
+        ["怎么防蚜虫？", "滴灌多久浇一次？", "叶面肥浓度多少？", "大棚湿度怎么降？", "如何申报农机补贴？"],
+        3,
+    )
+    return Resp(
+        data={
+            "answer": best["answer"],
+            "matched": True,
+            "suggestions": suggestions,
+            "model": "demo-mock-v0.1",
+            "is_mock": True,
+        }
+    )
+
+
 class DiseaseOut(BaseModel):
     """识病结果。"""
 
