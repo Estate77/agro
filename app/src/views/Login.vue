@@ -64,7 +64,12 @@ function back() {
 <template>
   <div class="login-page">
     <div class="hero">
-      <div class="logo">🌾</div>
+      <svg class="logo" viewBox="0 0 36 36" aria-hidden="true">
+        <circle cx="18" cy="18" r="15.5" fill="none" stroke="#d9a441" stroke-width="1.6" />
+        <path d="M18 27 C18 21 18 17 18 12" stroke="#eaf3e6" stroke-width="1.8" fill="none" stroke-linecap="round" />
+        <path d="M18 17 C13.5 17 10.5 14 10.5 9 C15.5 9 18 12.5 18 17 Z" fill="#9fce8f" />
+        <path d="M18 13.5 C18 9.5 21 7 26 7 C26 12 22.5 14 18 13.5 Z" fill="#d9a441" />
+      </svg>
       <h1>智耘系列</h1>
       <p>一个 APP · 三端角色 · 随时切换</p>
     </div>
@@ -72,7 +77,7 @@ function back() {
     <!-- 第 1 步：选择端 -->
     <div v-if="!selected" class="form">
       <p class="center muted" style="margin-top: 0">请选择你的身份入口</p>
-      <button class="term-card" @click="pick('b')">
+      <button class="term-card t-b" @click="pick('b')">
         <span class="t-icon">🌱</span>
         <span class="grow" style="text-align: left">
           <b style="font-size: 20px">智耘农</b>
@@ -80,21 +85,21 @@ function back() {
         </span>
         <span class="tag tag-green">演示账号已备好</span>
       </button>
-      <button class="term-card" @click="pick('c')">
+      <button class="term-card t-c" @click="pick('c')">
         <span class="t-icon">🥬</span>
         <span class="grow" style="text-align: left">
           <b style="font-size: 20px">智耘食</b>
           <span class="muted" style="display: block; font-size: 14px">C 端 · 消费者 · 扫码溯源 · 碳积分</span>
         </span>
-        <span class="tag tag-green">免登录进入</span>
+        <span class="tag tag-amber">免登录进入</span>
       </button>
-      <button class="term-card" @click="pick('g')">
+      <button class="term-card t-g" @click="pick('g')">
         <span class="t-icon">🛡️</span>
         <span class="grow" style="text-align: left">
           <b style="font-size: 20px">智耘政</b>
           <span class="muted" style="display: block; font-size: 14px">G 端 · 监管员 · 主体核查 · 应急上报</span>
         </span>
-        <span class="tag tag-green">演示账号已备好</span>
+        <span class="tag tag-blue">演示账号已备好</span>
       </button>
       <p class="foot muted center">三端可随时在「我的」里切换 · 演示版 v1.0</p>
     </div>
@@ -151,33 +156,43 @@ function back() {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #2f7d4f 0%, #3f9d68 32%, #f4f6f8 32%);
+  background:
+    var(--zy-contour),
+    linear-gradient(180deg, #16382a 0%, #1f4d38 30%, #2f7d4f 46%, #f5f3ea 46.2%);
   padding: 0 22px calc(30px + env(safe-area-inset-bottom));
 }
 .hero {
-  padding: calc(46px + env(safe-area-inset-top)) 0 30px;
+  padding: calc(46px + env(safe-area-inset-top)) 0 34px;
   text-align: center;
   color: #fff;
 }
 .logo {
-  font-size: 56px;
-  margin-bottom: 6px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
 }
 .hero h1 {
   margin: 0;
-  font-size: 30px;
-  letter-spacing: 2px;
+  font-family: var(--zy-display);
+  font-size: 31px;
+  letter-spacing: 6px;
+  font-weight: 700;
 }
 .hero p {
   margin: 8px 0 0;
-  font-size: 15px;
-  opacity: 0.92;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #d9a441;
+  opacity: 0.95;
 }
 .form {
-  background: #fff;
-  border-radius: 18px;
+  background: #fbf9f1;
+  border: 1px solid #e7e2d2;
+  border-radius: 20px;
   padding: 22px 18px;
-  box-shadow: 0 8px 28px rgba(31, 45, 61, 0.1);
+  box-shadow: 0 14px 36px rgba(16, 36, 26, 0.28);
+  animation: cardIn 0.36s ease both;
 }
 .term-card {
   width: 100%;
@@ -186,19 +201,34 @@ function back() {
   gap: 14px;
   padding: 18px 14px;
   margin-bottom: 12px;
-  background: #f8faf9;
+  background: #fff;
   border: 1.5px solid var(--zy-line);
-  border-radius: 14px;
+  border-radius: 16px;
   text-align: left;
   cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s;
 }
 .term-card:active {
-  background: var(--zy-primary-soft);
-  border-color: var(--zy-primary);
+  transform: scale(0.98);
 }
 .t-icon {
-  font-size: 38px;
+  font-size: 36px;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  flex-shrink: 0;
 }
+/* 三端个性色块 */
+.t-b .t-icon { background: var(--zy-primary-soft); }
+.t-c .t-icon { background: var(--zy-accent-soft); }
+.t-g .t-icon { background: #e3edf7; }
+.t-b:active { border-color: var(--zy-primary); box-shadow: 0 0 0 3px rgba(47, 125, 79, 0.12); }
+.t-c:active { border-color: var(--zy-accent); box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.15); }
+.t-g:active { border-color: #2d5a8e; box-shadow: 0 0 0 3px rgba(45, 90, 142, 0.12); }
+.tag-blue { background: #e3edf7; color: #2d5a8e; }
 .field {
   margin-bottom: 14px;
 }
@@ -211,7 +241,7 @@ function back() {
 .back {
   font-size: 22px;
   padding: 4px 12px;
-  background: #f0f2f4;
+  background: #f0efe6;
   border-radius: 10px;
   border: none;
   cursor: pointer;

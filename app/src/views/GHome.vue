@@ -93,13 +93,13 @@ onMounted(async () => {
 
 <style scoped>
 .g-navbar {
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  background: var(--zy-contour), linear-gradient(140deg, #1e3a5f 0%, #2d5a8e 90%);
 }
 .me-btn {
   font-size: 20px;
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.18);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 10px;
   cursor: pointer;
 }
@@ -107,11 +107,13 @@ onMounted(async () => {
   background: #fdeceb;
   color: var(--zy-danger);
   border: 1px solid #f5c8c5;
+  border-left: 4px solid var(--zy-danger);
   border-radius: 12px;
   padding: 10px 14px;
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 12px;
+  animation: cardIn 0.34s ease both;
 }
 .entry {
   flex: 1;
@@ -120,13 +122,17 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   padding: 14px 4px;
-  background: #f5f8ff;
-  border: none;
-  border-radius: 12px;
-  color: #1d4ed8;
+  background: #f0f4fa;
+  border: 1px solid #dde6f0;
+  border-radius: 14px;
+  color: #1e3a5f;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.entry:active {
+  transform: scale(0.95);
 }
 .section-head {
   margin: 16px 0 10px;

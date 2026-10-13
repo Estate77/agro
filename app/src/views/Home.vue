@@ -77,23 +77,21 @@ onMounted(load);
     </header>
 
     <div class="page">
-      <!-- 天气卡片 -->
-      <div class="card weather" v-if="weather">
+      <!-- 天气 hero 面板 -->
+      <div class="hero-weather" v-if="weather">
         <div class="row">
           <div class="emoji">{{ weather.icon }}</div>
           <div class="grow">
-            <div style="font-size: 22px; font-weight: 700">
-              {{ weather.temp_lo }}~{{ weather.temp_hi }}℃ · {{ weather.condition }}
-            </div>
-            <div class="muted">湿度 {{ weather.humidity }}% · {{ weather.wind }}风</div>
+            <div class="temp">{{ weather.temp_lo }}<i>~</i>{{ weather.temp_hi }}<span>℃</span></div>
+            <div class="cond">{{ weather.condition }} · 湿度 {{ weather.humidity }}% · {{ weather.wind }}风</div>
           </div>
         </div>
         <p class="advice">💡 {{ weather.advice }}</p>
         <div class="row forecast">
           <div v-for="f in forecast" :key="f.date" class="fc">
-            <div class="muted" style="font-size: 12px">{{ f.weekday }}</div>
-            <div style="font-size: 20px">{{ f.icon }}</div>
-            <div style="font-size: 13px">{{ f.temp_lo }}/{{ f.temp_hi }}°</div>
+            <div class="fc-wd">{{ f.weekday }}</div>
+            <div class="fc-ico">{{ f.icon }}</div>
+            <div class="fc-temp">{{ f.temp_lo }}/{{ f.temp_hi }}°</div>
           </div>
         </div>
       </div>
@@ -154,18 +152,52 @@ onMounted(load);
 .nav-ico {
   font-size: 22px;
   padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   border: none;
   cursor: pointer;
 }
-.weather .emoji {
-  font-size: 44px;
+/* 天气 hero：松林绿渐变面板 */
+.hero-weather {
+  background: var(--zy-contour), linear-gradient(150deg, #1c4433 0%, #2f7d4f 100%);
+  color: #fff;
+  border-radius: 20px;
+  padding: 18px 16px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px rgba(28, 68, 51, 0.35);
+  animation: cardIn 0.34s ease both;
+}
+.hero-weather .emoji {
+  font-size: 46px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+}
+.temp {
+  font-family: var(--zy-display);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 1px;
+}
+.temp i {
+  font-style: normal;
+  color: #d9a441;
+  margin: 0 2px;
+}
+.temp span {
+  font-size: 18px;
+  margin-left: 3px;
+  color: #cfe3d2;
+}
+.cond {
+  font-size: 14px;
+  color: #cfe3d2;
+  margin-top: 3px;
 }
 .advice {
-  background: var(--zy-primary-soft);
-  color: var(--zy-primary-dark);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f4f0e1;
+  border-radius: 11px;
   padding: 10px 12px;
   font-size: 15px;
   margin: 12px 0;
@@ -177,10 +209,25 @@ onMounted(load);
 .fc {
   text-align: center;
   min-width: 42px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 6px 4px;
+}
+.fc-wd {
+  font-size: 12px;
+  color: #a8c7ad;
+}
+.fc-ico {
+  font-size: 20px;
+}
+.fc-temp {
+  font-size: 12px;
+  color: #e6efe4;
 }
 .alert-strip {
-  background: #fff7e8;
-  border: 1px solid #f5deb4;
+  background: #fdf6e7;
+  border: 1px solid #eedbb0;
+  border-left: 4px solid var(--zy-accent);
   border-radius: 12px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -200,7 +247,7 @@ onMounted(load);
   align-items: center;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--zy-line);
+  border-bottom: 1px dashed var(--zy-line);
 }
 .task-item:last-child {
   border-bottom: none;
@@ -218,10 +265,16 @@ onMounted(load);
   align-items: center;
   gap: 6px;
   padding: 14px 4px;
-  background: #f8faf9;
-  border: none;
-  border-radius: 12px;
+  background: #faf9f2;
+  border: 1px solid #eee9d8;
+  border-radius: 13px;
   color: var(--zy-text);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s;
+}
+.tool:active {
+  transform: scale(0.95);
+  background: var(--zy-primary-soft);
 }
 .tool .tag {
   position: absolute;
@@ -230,10 +283,10 @@ onMounted(load);
 }
 .toast {
   position: fixed;
-  bottom: 96px;
+  bottom: 116px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(31, 45, 61, 0.85);
+  background: rgba(36, 51, 40, 0.88);
   color: #fff;
   padding: 10px 18px;
   border-radius: 999px;

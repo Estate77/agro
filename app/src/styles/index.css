@@ -1,18 +1,25 @@
-/* 智耘农 · 移动端主题（极简 / 大字号 / 高对比） */
+/* 智耘系列 · 移动端主题 v2「丰收手账」
+   松林绿 × 麦秆琥珀 × 米纸画布 · 与 PC 端「数字农政」同源的品牌基因
+   原则：极简 / 大字号 / 高对比（老年模式可全局缩放） */
 
 :root {
   --zy-primary: #2f7d4f;
   --zy-primary-dark: #256b41;
   --zy-primary-soft: #e8f5ec;
+  --zy-accent: #d9a441; /* 麦秆琥珀 */
+  --zy-accent-soft: #f7ecd4;
   --zy-warn: #e6a23c;
   --zy-danger: #d9463e;
-  --zy-bg: #f4f6f8;
+  --zy-bg: #f5f3ea; /* 米纸画布 */
   --zy-card: #ffffff;
-  --zy-text: #1f2d3d;
-  --zy-text-2: #5e6d78;
-  --zy-line: #e8edf0;
-  --zy-radius: 14px;
+  --zy-text: #243328;
+  --zy-text-2: #6b7a6e;
+  --zy-line: #e7e2d2;
+  --zy-radius: 16px;
+  --zy-display: Georgia, "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
   --zy-safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* 品牌纹理：等高线（与 PC 顶栏同款基因） */
+  --zy-contour: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='120' viewBox='0 0 420 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.06'%3E%3Cpath d='M0 96 Q 60 56 130 84 T 260 76 T 420 92'/%3E%3Cpath d='M0 72 Q 70 32 150 64 T 300 56 T 420 68'/%3E%3Cpath d='M0 48 Q 80 10 170 42 T 340 34 T 420 44'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 * {
@@ -41,13 +48,13 @@ html.zy-large body {
   height: 100%;
 }
 
-/* 页面容器：留出顶栏与底栏 */
+/* 页面容器：留出顶栏与悬浮 TabBar */
 .page {
-  padding: 14px 14px calc(74px + var(--zy-safe-bottom));
+  padding: 14px 16px calc(96px + var(--zy-safe-bottom));
   min-height: 100%;
 }
 
-/* 顶部标题栏 */
+/* 顶部标题栏：松林绿 + 等高线纹理 */
 .navbar {
   position: sticky;
   top: 0;
@@ -57,31 +64,46 @@ html.zy-large body {
   gap: 10px;
   padding: 12px 16px;
   padding-top: calc(12px + env(safe-area-inset-top, 0px));
-  background: linear-gradient(135deg, var(--zy-primary) 0%, #3f9d68 100%);
+  background: var(--zy-contour), linear-gradient(160deg, #1c4433 0%, #2f7d4f 120%);
   color: #fff;
+  border-bottom: 1px solid rgba(14, 36, 25, 0.4);
 }
 .navbar .title {
   font-size: 20px;
   font-weight: 700;
   flex: 1;
+  letter-spacing: 1px;
 }
 .navbar .back {
   font-size: 22px;
   padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 10px;
 }
 
-/* 卡片 */
+/* 卡片：白瓷 + 发丝线 + 柔影，进场轻浮起 */
 .card {
   background: var(--zy-card);
+  border: 1px solid rgba(231, 226, 210, 0.8);
   border-radius: var(--zy-radius);
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.06);
+  box-shadow: 0 2px 10px rgba(36, 51, 40, 0.05);
+  animation: cardIn 0.34s ease both;
+}
+.card:nth-child(2) { animation-delay: 0.04s; }
+.card:nth-child(3) { animation-delay: 0.08s; }
+.card:nth-child(4) { animation-delay: 0.12s; }
+.card:nth-child(5) { animation-delay: 0.16s; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card { animation: none; }
 }
 
-/* 大按钮：高度 ≥ 48px */
+/* 大按钮：高度 ≥ 48px，带按压反馈 */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -89,18 +111,19 @@ html.zy-large body {
   min-height: 48px;
   padding: 0 18px;
   border: none;
-  border-radius: 12px;
+  border-radius: 13px;
   font-size: 17px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
+.btn:active { transform: scale(0.97); }
 .btn-primary {
-  background: var(--zy-primary);
+  background: linear-gradient(150deg, #35885a 0%, #2f7d4f 60%, #276a44 100%);
   color: #fff;
+  box-shadow: 0 4px 14px rgba(47, 125, 79, 0.32);
 }
-.btn-primary:active {
-  background: var(--zy-primary-dark);
-}
+.btn-primary:active { background: var(--zy-primary-dark); }
 .btn-soft {
   background: var(--zy-primary-soft);
   color: var(--zy-primary);
@@ -111,8 +134,9 @@ html.zy-large body {
   border: 1px solid var(--zy-line);
 }
 .btn-danger {
-  background: var(--zy-danger);
+  background: linear-gradient(150deg, #e05a52, #d9463e);
   color: #fff;
+  box-shadow: 0 4px 14px rgba(217, 70, 62, 0.3);
 }
 .btn-block {
   display: flex;
@@ -133,9 +157,11 @@ html.zy-large body {
   background: #fff;
   color: var(--zy-text);
   outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .input:focus {
   border-color: var(--zy-primary);
+  box-shadow: 0 0 0 3px rgba(47, 125, 79, 0.12);
 }
 
 /* 标签 */
@@ -156,12 +182,16 @@ html.zy-large body {
   color: #b26a0b;
 }
 .tag-gray {
-  background: #eef1f4;
+  background: #f0efe6;
   color: var(--zy-text-2);
 }
 .tag-red {
   background: #fdeceb;
   color: var(--zy-danger);
+}
+.tag-amber {
+  background: var(--zy-accent-soft);
+  color: #9a7115;
 }
 
 /* 空态 */
@@ -175,36 +205,49 @@ html.zy-large body {
   margin-bottom: 8px;
 }
 
-/* 底部 TabBar */
+/* 底部 TabBar：悬浮胶囊 · 毛玻璃 */
 .tabbar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 14px;
+  right: 14px;
+  bottom: calc(10px + var(--zy-safe-bottom));
   z-index: 20;
   display: flex;
-  background: #fff;
-  border-top: 1px solid var(--zy-line);
-  padding-bottom: var(--zy-safe-bottom);
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(231, 226, 210, 0.9);
+  border-radius: 22px;
+  box-shadow: 0 8px 28px rgba(36, 51, 40, 0.16);
+  padding: 6px;
 }
 .tabbar a {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   padding: 8px 0 6px;
   text-decoration: none;
   color: var(--zy-text-2);
   font-size: 13px;
+  border-radius: 16px;
+  transition: background 0.18s, color 0.18s;
 }
 .tabbar a .icon {
   font-size: 24px;
-  line-height: 1;
+  line-height: 1.1;
+  transition: transform 0.18s;
 }
 .tabbar a.router-link-active {
-  color: var(--zy-primary);
+  background: linear-gradient(150deg, #35885a, #2f7d4f);
+  color: #fff;
   font-weight: 700;
+  box-shadow: 0 4px 12px rgba(47, 125, 79, 0.35);
+}
+.tabbar a.router-link-active .icon {
+  transform: translateY(-1px) scale(1.06);
 }
 
 /* 通用工具类 */

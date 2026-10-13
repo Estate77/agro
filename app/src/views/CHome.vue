@@ -94,27 +94,29 @@ onMounted(load);
 
 <style scoped>
 .c-navbar {
-  background: linear-gradient(135deg, #1e8f5a 0%, #27b071 100%);
+  background: var(--zy-contour), linear-gradient(140deg, #14532d 0%, #1e8f5a 90%);
 }
 .points {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(217, 164, 65, 0.55);
+  color: #f7ecd4;
   border-radius: 999px;
   padding: 8px 14px;
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
 }
 .scan-card {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, #1e8f5a 0%, #27b071 100%);
+  background: var(--zy-contour), linear-gradient(140deg, #14532d 0%, #1e8f5a 100%);
   color: #fff;
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 20px 18px;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(30, 143, 90, 0.35);
+  box-shadow: 0 8px 24px rgba(20, 83, 45, 0.35);
+  animation: cardIn 0.34s ease both;
 }
 .scan-ico {
   font-size: 40px;
@@ -134,10 +136,15 @@ onMounted(load);
 }
 .p-card {
   background: #fff;
-  border-radius: 14px;
+  border: 1px solid var(--zy-line);
+  border-radius: 16px;
   padding: 14px;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(31, 45, 61, 0.06);
+  box-shadow: 0 2px 8px rgba(36, 51, 40, 0.05);
+  transition: transform 0.12s ease;
+}
+.p-card:active {
+  transform: scale(0.97);
 }
 .p-ico {
   font-size: 34px;
@@ -153,7 +160,7 @@ onMounted(load);
   align-items: center;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--zy-line);
+  border-bottom: 1px dashed var(--zy-line);
   cursor: pointer;
 }
 .news:last-child {
