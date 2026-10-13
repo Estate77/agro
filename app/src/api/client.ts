@@ -1,4 +1,5 @@
 import axios, { AxiosError, type AxiosInstance } from "axios";
+import { demoAdapter, demoEnabled } from "@/mock/demo";
 
 /**
  * API 地址优先级：
@@ -12,6 +13,10 @@ const http: AxiosInstance = axios.create({
   baseURL: API_BASE,
   timeout: 15_000,
 });
+
+// 纯前端演示模式：Pages 部署注入 window.__ZYUN_DEMO_OFFLINE__ 后，
+// 所有请求由内置 mock 层（src/mock/demo.ts）响应，无需真实后端。
+if (demoEnabled()) http.defaults.adapter = demoAdapter;
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem("zy_access_token");

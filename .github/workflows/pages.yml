@@ -49,7 +49,8 @@ jobs:
           cp -r app/dist/. site/app/
 
           printf 'window.__ZYUN_API_BASE__ = "%s";\n' "$BACKEND_API_BASE" > site/pc/config.js
-          printf 'window.__ZYUN_API_BASE__ = "%s";\n' "$BACKEND_API_BASE" > site/app/config.js
+          # APP 端启用纯前端演示模式：请求由内置 mock 层响应，不依赖公网后端
+          printf 'window.__ZYUN_API_BASE__ = "";\nwindow.__ZYUN_DEMO_OFFLINE__ = true;\n' > site/app/config.js
 
           cat > site/index.html <<'EOF'
           <!doctype html>
